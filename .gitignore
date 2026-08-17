@@ -1,0 +1,11 @@
+# data/ 配下の PDF と manifest.json は追跡する（除外しない）。
+
+# 中断したダウンロードの残骸
+*.part
+*.part.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/

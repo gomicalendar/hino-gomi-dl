@@ -1,0 +1,78 @@
+name: カレンダー PDF の取得
+
+# 毎日 05:17 JST（= 20:17 UTC）に配布ページを見に行き、
+# ダウンロードに成功したときだけ data/ を commit & push する。
+#
+# 保存済みのファイルがあれば通信は配布ページの HTML だけで終わるので、
+# 平常時の実行は数秒で「取得済み 10 / 失敗 0」と出て何も push しない。
+# 新年度（r9 など）のリンクが並んだ日に初めて PDF を取りに行く。
+on:
+  schedule:
+    - cron: '17 20 * * *'
+  workflow_dispatch:
+    inputs:
+      refresh:
+        description: '保存済みファイルもサーバに変更を問い合わせる（--refresh）'
+        type: boolean
+        default: false
+      edition:
+        description: '取得する年度を指定する（例: r8）。空なら配布ページの最新年度'
+        type: string
+        default: ''
+
+# data/ を push するため書き込み権限が要る
+permissions:
+  contents: write
+
+# 前の実行が走っている間は待つ。push が衝突しない
+concurrency:
+  group: hino-gomi-dl
+  cancel-in-progress: false
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    # 1 ファイル約 26MB × 10 件。間隔 1 秒を空けて直列に取る
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 失敗したらここで終わり。以降の commit & push は動かない
+      - name: ダウンロード
+        env:
+          # 入力は run に直接展開せず環境変数越しに渡す
+          REFRESH: ${{ inputs.refresh }}
+          EDITION: ${{ inputs.edition }}
+        run: |
+          set -o pipefail
+          args=()
+          if [ "$REFRESH" = "true" ]; then args+=(--refresh); fi
+          if [ -n "$EDITION" ]; then args+=(--edition "$EDITION"); fi
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          python hino_gomi_dl.py "${args[@]}" 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 変更があれば commit & push
+        run: |
+          git add -A -- data
+          if git diff --cached --quiet; then
+            echo '変更なし（push しませんでした）' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          count=$(git diff --cached --name-only | wc -l)
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "data: ごみカレンダー PDF を更新（${count} 件）" \
+                     -m "$(git diff --cached --name-status)"
+          git push
+          {
+            echo "### push しました（${count} 件）"
+            echo '```'
+            git show --stat --oneline HEAD | tail -n +2
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
