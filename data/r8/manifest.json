@@ -1,0 +1,109 @@
+{
+  "source": {
+    "page": "https://www.city.hino.lg.jp/kurashi/gomi/kihon/1002863.html",
+    "fetched_at": "2026-08-17T20:48:28+00:00"
+  },
+  "edition": "r8",
+  "files": {
+    "r8.higashihirayama.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.higashihirayama.pdf",
+      "area": "higashihirayama",
+      "label": "令和8年版 東平山・旭が丘・富士町",
+      "bytes": 26989735,
+      "sha256": "7bcc7a91219456de028f882aee3e1219faaf836556a9c8158c24b6c6c0ed6ba8",
+      "etag": "\"19bd4a7-643fde16bf700\"",
+      "last_modified": "Thu, 20 Nov 2025 02:59:08 GMT",
+      "downloaded_at": "2026-08-17T20:45:12+00:00"
+    },
+    "r8.hinohonmachi.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.hinohonmachi.pdf",
+      "area": "hinohonmachi",
+      "label": "令和8年版 日野本町・日野",
+      "bytes": 25767550,
+      "sha256": "0404b5464f7f7e9cf638a54ed87c62699f6077c4301e69fd4ca72e12037e289c",
+      "etag": "\"1892e7e-643fda95571c0\"",
+      "last_modified": "Thu, 20 Nov 2025 02:43:27 GMT",
+      "downloaded_at": "2026-08-17T20:45:34+00:00"
+    },
+    "r8.hirayama.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.hirayama.pdf",
+      "area": "hirayama",
+      "label": "令和8年版 平山・西平山",
+      "bytes": 27014983,
+      "sha256": "34299de5efd276c0ddfe8edacf3a99752243a81646b9e2907507daf5af80ee67",
+      "etag": "\"19c3747-643fdcfe5e180\"",
+      "last_modified": "Thu, 20 Nov 2025 02:54:14 GMT",
+      "downloaded_at": "2026-08-17T20:45:57+00:00"
+    },
+    "r8.kamida.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.kamida.pdf",
+      "area": "kamida",
+      "label": "令和8年版 上田・宮・万願寺・石田・新井",
+      "bytes": 25728894,
+      "sha256": "98f6431108bca47cd3a8ad9207910b0d56b9c9a0865393f53c270f5386b6b4e0",
+      "etag": "\"188977e-643fdb2740a00\"",
+      "last_modified": "Thu, 20 Nov 2025 02:46:00 GMT",
+      "downloaded_at": "2026-08-17T20:46:18+00:00"
+    },
+    "r8.minamidaira.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.minamidaira.pdf",
+      "area": "minamidaira",
+      "label": "令和8年版 南平",
+      "bytes": 27211028,
+      "sha256": "cfb0050f56712268969726828d54436c690fb55162742126f6a7c182919e664f",
+      "etag": "\"19f3514-643fdc075dac0\"",
+      "last_modified": "Thu, 20 Nov 2025 02:49:55 GMT",
+      "downloaded_at": "2026-08-17T20:46:40+00:00"
+    },
+    "r8.mogusa.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.mogusa.pdf",
+      "area": "mogusa",
+      "label": "令和8年版 百草・程久保",
+      "bytes": 27004183,
+      "sha256": "26984eb09de9d3fe042e1b0385890913409c0276b3be6766f66b0785a5ec7a83",
+      "etag": "\"19c0d17-643fdc8af9140\"",
+      "last_modified": "Thu, 20 Nov 2025 02:52:13 GMT",
+      "downloaded_at": "2026-08-17T20:47:03+00:00"
+    },
+    "r8.ochikawa.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.ochikawa.pdf",
+      "area": "ochikawa",
+      "label": "令和8年版 落川・三沢・高幡",
+      "bytes": 25943499,
+      "sha256": "136762455bcff3d6d9cdaaf9005709f8dd350dd7b6722d006b9cbfae78cb9002",
+      "etag": "\"18bddcb-643fdb9c8dec0\"",
+      "last_modified": "Thu, 20 Nov 2025 02:48:03 GMT",
+      "downloaded_at": "2026-08-17T20:47:24+00:00"
+    },
+    "r8.osakaue.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.osakaue.pdf",
+      "area": "osakaue",
+      "label": "令和8年版 大坂上・日野台・新町・栄町",
+      "bytes": 25216078,
+      "sha256": "17ce5761755390c04e961885b8fe0726810b2b3ff962231ead1e94d3c42b6ee8",
+      "etag": "\"180c44e-643fc54fdc240\"",
+      "last_modified": "Thu, 20 Nov 2025 01:08:17 GMT",
+      "downloaded_at": "2026-08-17T20:47:45+00:00"
+    },
+    "r8.tamadaira.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.tamadaira.pdf",
+      "area": "tamadaira",
+      "label": "令和8年版 多摩平",
+      "bytes": 25727726,
+      "sha256": "ad653daab397ca7baa5131ed26f26e73e799cf5d9d5a891e8d06f747ae79eae5",
+      "etag": "\"18892ee-643fc4e6f4ac0\"",
+      "last_modified": "Thu, 20 Nov 2025 01:06:27 GMT",
+      "downloaded_at": "2026-08-17T20:48:07+00:00"
+    },
+    "r8.toyoda.pdf": {
+      "url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/002/863/r8.toyoda.pdf",
+      "area": "toyoda",
+      "label": "令和8年版 豊田・東豊田・川辺堀之内・神明",
+      "bytes": 25725327,
+      "sha256": "78c833f9f95dba032e119c43baed8bf00f451f90269d0487c5b7d5fc05eadbcf",
+      "etag": "\"188898f-643fd927211c0\"",
+      "last_modified": "Thu, 20 Nov 2025 02:37:03 GMT",
+      "downloaded_at": "2026-08-17T20:48:28+00:00"
+    }
+  }
+}
