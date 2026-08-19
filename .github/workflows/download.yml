@@ -4,8 +4,12 @@ name: カレンダー PDF の取得
 # ダウンロードに成功したときだけ data/ を commit & push する。
 #
 # 保存済みのファイルがあれば通信は配布ページの HTML だけで終わるので、
-# 平常時の実行は数秒で「取得済み 10 / 失敗 0」と出て何も push しない。
+# 平常時の実行は数秒で「取得済み 10 / 失敗 0」と出て data/ は変わらない。
 # 新年度（r9 など）のリンクが並んだ日に初めて PDF を取りに行く。
+#
+# ただし last-run.json（最終実行の記録）は毎回書き換えて push する。
+# スケジュール実行は 60 日コミットが無いと GitHub に無効化されるので、
+# 「何も変わらなかった」という結果そのものをコミットして時計を巻き戻す。
 on:
   schedule:
     - cron: '17 20 * * *'
@@ -42,8 +46,10 @@ jobs:
         with:
           python-version: '3.12'
 
-      # 失敗したらここで終わり。以降の commit & push は動かない
+      # 失敗しても次のステップは走る（if: always()）。data/ を commit しないのは
+      # 従来どおりだが、実行ログだけは残す
       - name: ダウンロード
+        id: download
         env:
           # 入力は run に直接展開せず環境変数越しに渡す
           REFRESH: ${{ inputs.refresh }}
@@ -53,26 +59,90 @@ jobs:
           args=()
           if [ "$REFRESH" = "true" ]; then args+=(--refresh); fi
           if [ -n "$EDITION" ]; then args+=(--edition "$EDITION"); fi
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
-          python hino_gomi_dl.py "${args[@]}" 2>&1 | tee -a "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
 
-      - name: 変更があれば commit & push
+          # 作業ツリーを汚さない場所に控えを取る。要約を次のステップへ渡すため
+          log="$RUNNER_TEMP/run.log"
+          rc=0
+          python hino_gomi_dl.py "${args[@]}" 2>&1 | tee "$log" || rc=$?
+
+          {
+            echo '```'
+            cat "$log"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          # 最終行が要約（「取得済み 10 / 失敗 0 -> data/r8」）。末尾から年度も拾う。
+          # 配布ページを読めずに落ちたときは要約が無いので、そのエラー行が入る
+          detail=$(tail -n 1 "$log" | tr -d '\r\n')
+          {
+            echo "detail=$detail"
+            echo "edition=$(printf '%s' "$detail" | sed -n 's|.*-> .*/||p')"
+          } >> "$GITHUB_OUTPUT"
+          exit $rc
+
+      # ダウンロードの成否に関わらず走る。失敗した日に記録まで止まると、
+      # 故障と沈黙が重なって 60 日後にスケジュールごと無効化されてしまう
+      - name: 実行ログを書いて commit & push
+        if: always()
+        env:
+          OUTCOME: ${{ steps.download.outcome }}
+          DETAIL: ${{ steps.download.outputs.detail }}
+          EDITION: ${{ steps.download.outputs.edition }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          git add -A -- data
-          if git diff --cached --quiet; then
-            echo '変更なし（push しませんでした）' >> "$GITHUB_STEP_SUMMARY"
-            exit 0
+          # 失敗した回の data/ は捨てる。中途半端な年度フォルダを下流に渡さない
+          changed=''
+          if [ "$OUTCOME" = 'success' ]; then
+            git add -A -- data
+            changed=$(git diff --cached --name-status -- data)
           fi
-          count=$(git diff --cached --name-only | wc -l)
+          count=$(printf '%s' "$changed" | grep -c . || true)
+
+          if [ "$OUTCOME" != 'success' ]; then
+            result=failed
+          elif [ "$count" -gt 0 ]; then
+            result=updated
+          else
+            result=ok
+          fi
+
+          # JSON は python に組ませる。要約行の引用符や記号をそのまま入れられる
+          RESULT="$result" python - <<'PY'
+          import datetime as dt, json, os
+          from pathlib import Path
+
+          jst = dt.timezone(dt.timedelta(hours=9))
+          Path("last-run.json").write_text(json.dumps({
+              "run_at": dt.datetime.now(jst).replace(microsecond=0).isoformat(),
+              "result": os.environ["RESULT"],
+              "detail": os.environ.get("DETAIL", ""),
+              "edition": os.environ.get("EDITION") or None,
+              "run_url": os.environ["RUN_URL"],
+          }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+          PY
+
+          # run_at が毎回変わるので、ここは必ず 1 件以上の差分になる
+          git add -- last-run.json
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git commit -m "data: ごみカレンダー PDF を更新（${count} 件）" \
-                     -m "$(git diff --cached --name-status)"
-          git push
+          if [ -n "$changed" ]; then
+            title="data: ごみカレンダー PDF を更新（${count} 件）"
+            body="$changed"
+          else
+            title="chore: 実行ログ（${result}）"
+            body="$DETAIL"
+          fi
+          if [ -n "$body" ]; then
+            git commit -m "$title" -m "$body"
+          else
+            git commit -m "$title"
+          fi
+          # 毎日 push するので、人の push と鉢合わせても赤くしない
+          git push || { git pull --rebase && git push; }
+
           {
-            echo "### push しました（${count} 件）"
+            echo "### ${result}"
             echo '```'
-            git show --stat --oneline HEAD | tail -n +2
+            cat last-run.json
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
