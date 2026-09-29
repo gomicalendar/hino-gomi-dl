@@ -1,7 +1,7 @@
 {
-  "run_at": "2026-09-29T09:22:34+09:00",
+  "run_at": "2026-09-30T08:44:02+09:00",
   "result": "ok",
   "detail": "取得済み 10 / 失敗 0 -> data/r8",
   "edition": "r8",
-  "run_url": "https://github.com/gomicalendar/hino-gomi-dl/actions/runs/36502765688"
+  "run_url": "https://github.com/gomicalendar/hino-gomi-dl/actions/runs/36646736499"
 }
